@@ -1,0 +1,204 @@
+import numpy as np  # import auxiliary library, typical idiom
+import pandas as pd  # import the Pandas library, typical idiom
+import bokeh as bh
+
+%matplotlib inline
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+import seaborn as sns  # also improves the look of plots
+from PIL import Image
+
+from bokeh.plotting import figure, show
+from bokeh.layouts import column, layout
+from bokeh.io import output_notebook, output_file
+from bokeh.models import HoverTool
+from bokeh.models import LogColorMapper
+from bokeh.models import ColumnDataSource, Div, Select, Slider, TextInput, RangeSlider
+from bokeh.sampledata.movies_data import movie_path 
+from os.path import dirname, join
+from bokeh.io import curdoc
+
+from bokeh.plotting import figure
+from bokeh.resources import CDN
+from bokeh.embed import file_html
+
+import sqlite3 as sql
+from os.path import dirname, join
+
+import numpy as np
+import pandas.io.sql as psql
+
+# Output for bokeh
+output_file('output.html')
+output_notebook()
+
+#Importing Datasheet
+Eyetracking_data = pd.read_csv("metro_data.csv", encoding = 'latin1', sep = ";")
+Eyetracking_data.head()
+Eyetracking_data.groupby('StimuliName').describe()
+#Replacing all weird symbols
+Eyetracking_data['StimuliName'] = Eyetracking_data['StimuliName'].replace({'24_Z?rich_S2.jpg': '24_Zurich_S2.jpg', '04_K?ln_S1.jpg': '04_Koln_S1.jpg',
+                                                                          '24_Zrich_S2.jpg' : '24_Zurich_S2.jpg', '24_Z?rich_S1.jpg' : '24_Zurich_S1.jpg',
+                                                                          '24b_Z?rich_S1.jpg' : '24b_Zurich_S1.jpg', '24_Zrich_S1.jpg' : '24_Zurich_S1.jpg',
+                                                                          '24b_Z?rich_S2.jpg' : '24b_Zurich_S2.jpg', '24b_Zrich_S1.jpg' : '24b_Zurich_S1.jpg', 
+                                                                           '12_Br?ssel_S1.jpg' : '12_Brussel_S1.jpg', '12_Brssel_S1.jpg' : '12_Brussel_S1.jpg',
+                                                                          '12_Br?ssel_S2.jpg' : '12_Brussel_S2.jpg', '12_Brssel_S2.jpg' : '12_Brussel_S2.jpg',
+                                                                          '12b_Br?ssel_S1.jpg' : '12b_Brussel_S1.jpg', '12b_Brssel_S1.jpg' : '12b_Brussel_S1.jpg',
+                                                                          '12b_Br?ssel_S2.jpg' : '12b_Brussel_S2.jpg', '12b_Brssel_S2.jpg' : '12b_Brussel_S2.jpg',
+                                                                          '14_D?sseldorf_S1.jpg' : '14_Dusseldorf_S1.jpg', '14_Dsseldorf_S1.jpg' : '14_Dusseldorf_S1.jpg',
+                                                                          '14_D?sseldorf_S1.jpg' : '14_Dusseldorf_S2.jpg', '14_Dsseldorf_S2.jpg' : '14_Dusseldorf_S2.jpg',
+                                                                          '14b_D?sseldorf_S1.jpg' : '14b_Düsseldorf_S1.jpg', '14b_Dsseldorf_S1.jpg' : '14b_Düsseldorf_S1.jpg',
+                                                                          '14b_D?sseldorf_S2.jpg' : '14b_Düsseldorf_S2.jpg', '14b_Dsseldorf_S2.jpg' : '14b_Düsseldorf_S2.jpg',
+                                                                          })
+
+Eyetracking_data.groupby('StimuliName').describe()
+
+
+#Grouping data per map
+Antwerpen_S1 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '01_Antwerpen_S1.jpg']
+Antwerpen_S2 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '01_Antwerpen_S2.jpg']
+
+Antwerpen_S1b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '01b_Antwerpen_S1.jpg']
+Antwerpen_S2b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '01b_Antwerpen_S2.jpg']
+
+Berlin_S1 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '02_Berlin_S1.jpg']
+Berlin_S2 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '02_Berlin_S2.jpg']
+
+Berlin_S1b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '02b_Berlin_S1.jpg']
+Berlin_S2b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '02b_Berlin_S2.jpg']
+
+Bordeaux_S1 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '03_Bordeaux_S1.jpg']
+Bordeaux_S2 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '03_Bordeaux_S2.jpg']
+
+Bordeaux_S1b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '03b_Bordeaux_S1.jpg']
+Bordeaux_S2b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '03b_Bordeaux_S2.jpg']
+
+Köln_S1 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '04_Koln_S1.jpg']
+Köln_S2 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '04_Koln_S2.jpg']
+
+Köln_S1b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '04b_Koln_S1.jpg']
+Köln_S2b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '04b_Koln_S2.jpg']
+
+Frankfurt_S1 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '05_Frankfurt_S1.jpg']
+Frankfurt_S2 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '05_Frankfurt_S2.jpg']
+
+Frankfurt_S1b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '05b_Frankfurt_S1.jpg']
+Frankfurt_S2b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '05b_Frankfurt_S2.jpg']
+
+Hamburg_S1 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '06_Hamburg_S1.jpg']
+Hamburg_S2 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '06_Hamburg_S2.jpg']
+
+Hamburg_S1b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '06b_Hamburg_S1.jpg']
+Hamburg_S2b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '06b_Hamburg_S1.jpg']
+
+Moskau_S1 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '07_Moskau_S1.jpg']
+Moskau_S2 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '07_Moskau_S2.jpg']
+
+Moskau_S1b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '07b_Moskau_S1.jpg']
+Moskau_S2b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '07b_Moskau_S2.jpg']
+
+Riga_S1 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '08_Riga_S1.jpg']
+Riga_S2 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '08_Riga_S1.jpg']
+
+Riga_S1b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '08b_Riga_S1.jpg']
+Riga_S2b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '08b_Riga_S1.jpg']
+
+Tokyo_S1 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '09_Tokyo_S1.jpg']
+Tokyo_S2 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '09_Tokyo_S2.jpg']
+
+Tokyo_S1 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '09b_Tokyo_S1.jpg']
+Tokyo_S2 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '09b_Tokyo_S2.jpg']
+
+Barcelona_S1 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '10_Barcelona_S1.jpg']
+Barcelona_S2 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '10_Barcelona_S2.jpg']
+
+Barcelona_S1 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '10b_Barcelona_S1.jpg']
+Barcelona_S2 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '10b_Barcelona_S2.jpg']
+
+Bologna_S1 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '11_Bologna_S1.jpg']
+Bologna_S2 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '11_Bologna_S2.jpg']
+
+Bologna_S1b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '11b_Bologna_S1.jpg']
+Bologna_S2b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '11b_Bologna_S2.jpg']
+
+Brüssel_S1  = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '12_Brüssel_S1.jpg']
+Brüssel_S2  = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '12_Brüssel_S2.jpg']
+
+Brüssel_S1b  = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '12b_Brüssel_S1.jpg']
+Brüssel_S2b  = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '12b_Brüssel_S2.jpg']
+
+
+Budapest_S1 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '13_Budapest_S1.jpg']
+Budapest_S2 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '13_Budapest_S2.jpg']
+
+Budapest_S1b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '13b_Budapest_S1.jpg']
+Budapest_S2b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '13b_Budapest_S2.jpg']
+
+Düsseldorf_S1 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '14_Dusseldorf_S1.jpg']
+Düsseldorf_S2 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '14_Dusseldorf_S2.jpg']
+
+Düsseldorf_S1b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '14b_Dusseldorf_S1.jpg']
+Düsseldorf_S2b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '14b_Dusseldorf_S2.jpg']
+                                      
+Göteborg_S1 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '15_Goteborg_S1.jpg']
+Göteborg_S2 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '15_Goteborg_S2.jpg']
+                                      
+Göteborg_S1b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '15b_Göteborg_S1.jpg']
+Göteborg_S2b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '15b_Göteborg_S2.jpg'] 
+
+Hong_Kong_S1 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '16_Hong_Kong_S1.jpg']
+Hong_Kong_S2 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '16_Hong_Kong_S2.jpg'] 
+                                      
+Hong_Kong_S1b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '16b_Hong_Kong_S1.jpg']
+Hong_Kong_S2b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '16b_Hong_Kong_S2.jpg'] 
+                                      
+Krakau_S1 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '17_Krakau_S1.jpg']
+Krakau_S2 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '17_Krakau_S2.jpg']
+                                      
+Krakau_S1b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '17b_Krakau_S1.jpg']
+Krakau_S2b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '17b_Krakau_S2.jpg']
+                                      
+Ljubljana_S1 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '18_Ljubljana_S1.jpg']
+Ljubljana_S2 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '18_Ljubljana_S2.jpg']
+                                      
+Ljubljana_S1b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '18_Ljubljana_S1.jpg']
+Ljubljana_S2b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '18_Ljubljana_S2.jpg']                                      
+
+New_York_S1 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '19_New_York_S1.jpg']
+New_York_S2 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '19_New_York_S2.jpg']
+
+New_York_S1b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '19b_New_York_S1.jpg']
+New_York_S2b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '19b_New_York_S2.jpg']
+
+
+Paris_S1 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '20_Paris_S1.jpg']
+Paris_S2 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '20_Paris_S2.jpg']
+
+Paris_S1b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '20b_Paris_S1.jpg']
+Paris_S2b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '20b_Paris_S2.jpg']
+
+Pisa_S1 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '21_Pisa_S1.jpg']
+Pisa_S2 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '21_Pisa_S2.jpg']
+
+Pisa_S1b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '21b_Pisa_S1.jpg']
+Pisa_S2b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '21b_Pisa_S2.jpg']
+
+Venedig_S1 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '22_Venedig_S1.jpg']
+Venedig_S2 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '22_Venedig_S2.jpg']
+
+Venedig_S1b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '22b_Venedig_S1.jpg']
+Venedig_S2b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '22b_Venedig_S2.jpg']
+
+Warschau_S1 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '23_Warschau_S1.jpg']
+Warschau_S2 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '23_Warschau_S2.jpg']
+
+Warschau_S1 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '23b_Warschau_S1.jpg']
+Warschau_S2 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '23b_Warschau_S2.jpg']
+
+
+Zürich_S1 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '24_Zürich_S1.jpg']
+Zürich_S2 = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '24_Zürich_S2.jpg']
+
+Zürich_S1b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '24b_Zürich_S1.jpg']
+Zürich_S2b = Eyetracking_data.loc[Eyetracking_data['StimuliName'] == '24b_Zürich_S2.jpg']
+
