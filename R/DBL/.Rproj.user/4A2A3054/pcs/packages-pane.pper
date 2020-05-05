@@ -1,7 +1,7 @@
 {
     "installOptions" : {
         "installDependencies" : true,
-        "installFromRepository" : false,
-        "libraryPath" : "C:/Users/20190771/.conda/envs/orange/Lib/R/library"
+        "installFromRepository" : true,
+        "libraryPath" : "C:/Users/20190771/Documents/R/win-library/3.6"
     }
 }

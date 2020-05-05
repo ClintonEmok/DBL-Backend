@@ -1,0 +1,38 @@
+library(ggplot2)
+library(gganimate)
+library(jpeg)
+library(ggpubr)
+
+Antwerpen_S1 <- tracking_data[tracking_data["StimuliName"] == "01_Antwerpen_S1.jpg",]
+
+rownames(Antwerpen_S1) <- 1:nrow(Antwerpen_S1)
+
+
+img.file = file.choose()
+
+img <- jpeg::readJPEG(img.file)
+
+dim_img <- dim(img)
+
+map_plot <- ggplot(Antwerpen_S1, aes(x = MappedFixationPointX, y = MappedFixationPointY, size = FixationDuration, color = user
+                         ))+
+  background_image(img)+
+  geom_point(alpha = 0.7) +
+  scale_size(range = c(2,12)) +
+  #facet_wrap(~StimuliName) +
+  #scale_y_reverse()
+  xlim(0,dim_img[2])+
+  ylim(dim_img[1],0)
+  
+map_plot
+
+map_anim = map_plot + 
+  labs(title = "Frame = {frame_time}") + 
+  transition_time(FixationIndex) + 
+  shadow_mark(past = TRUE) + 
+  theme(plot.title = element_text(size = 26, face ="bold"))
+
+animate(map_anim, nframes = 500, fps = 10, renderer = gifski_renderer(file = "map animation.gif", loop = TRUE), 
+        width = dim_img[2], height = dim_img[1], end_pause = 20)
+
+
