@@ -8,3 +8,4 @@ xyplot(MappedFixationPointY~MappedFixationPointX | StimuliName, data = tracking_
        )
 
 library(animation)
+
