@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1588719197169.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "5D193EA1",
+    "lastKnownWriteTime" : 3419473789575321445,
+    "last_content_update" : 1588719197169,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "2B52CA14",
+        "caption" : "Antwerpen_S1",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=Antwerpen_S1&cache_key=2B52CA14",
+        "displayedObservations" : 503,
+        "environment" : "",
+        "object" : "Antwerpen_S1",
+        "preview" : 0,
+        "totalObservations" : 503,
+        "variables" : 8
+    },
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

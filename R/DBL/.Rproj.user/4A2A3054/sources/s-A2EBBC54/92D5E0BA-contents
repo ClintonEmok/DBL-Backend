@@ -1,0 +1,10 @@
+tracking_data <- read.csv('metro_data.csv', sep = ';')
+
+library(lattice)
+
+xyplot(MappedFixationPointY~MappedFixationPointX | StimuliName, data = tracking_data,
+       ylim = c(1300, 0),
+       xlim = c(0, 1800)
+       )
+
+
