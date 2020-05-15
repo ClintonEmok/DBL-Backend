@@ -10,6 +10,7 @@ tracking_data <- read.csv('metro_data.csv', sep = ';')
 stim_list = c(tracking_data$StimuliName)
 stim_list_unique <- unique(stim_list)
 
+
 shinyApp(
   ui = fluidPage(selectInput("variable", "Variable:", stim_list_unique),
       mainPanel(
