@@ -50,7 +50,7 @@ map_anim = map_plot +
   shadow_mark(past = TRUE) + 
   theme(plot.title = element_text(size = 26, face ="bold"))
 
-animate(map_anim, nframes = 40, fps = 4, renderer = gifski_renderer(file = "map animation.gif"), 
+animate(map_anim, nframes = 44, fps = 4, renderer = gifski_renderer(file = "map animation.gif"), 
         width = (dim_img[2] + 50)*3, height = dim_img[1]*3, end_pause = 30)
 
 
