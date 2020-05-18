@@ -1,12 +1,20 @@
+from django.http import HttpResponse
 from django.shortcuts import render
-from django.views.generic import TemplateView
 
-class Home(TemplateView):
-    template_name = 'home.html'
 
-def upload(request):
-    if request.method == 'POST':
-        uploaded_file = request.FILES['data']
-        print(uploaded_file.name)
-        print(uploaded_file.size)
-    return render(request, 'upload.html')
+
+
+
+
+def homepage(request):
+    # return HttpResponse('Welcome to our page')
+    return render(request, "index.html")
+
+
+def about(request):
+    # return HttpResponse('Hello World')
+    return render(request, "about.html")
+
+
+def plot(request):
+    return render(request, "plot.html")
