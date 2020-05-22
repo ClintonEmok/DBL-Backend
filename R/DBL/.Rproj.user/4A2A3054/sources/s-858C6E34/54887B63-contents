@@ -1,0 +1,55 @@
+library(ggplot2)
+library(gganimate)
+library(jpeg)
+library(ggpubr)
+library(plyr)
+
+map.data <- tracking_data[tracking_data["StimuliName"] == "02_Berlin_S1.jpg",]
+
+rownames(map.data) <- 1:nrow(map.data)
+
+map.data$index <- 1:nrow(map.data)
+
+map.data$user.index <- 1:nrow(map.data)
+
+user.count <- 1
+
+for(i in 2:nrow(map.data)){
+  if(map.data[i, 7] == map.data[i-1, 7]){
+    user.count <- user.count + 1
+    map.data[i, 10] <- user.count
+  } else {
+    user.count <- 1
+    map.data[i, 10] = user.count
+  }
+}
+
+max.index <- map.data[map.data$user.index == max(map.data$user.index), 10]
+
+
+img.file = file.choose()
+
+img <- jpeg::readJPEG(img.file)
+
+dim_img <- dim(img)
+
+
+map_plot <- ggplot(map.data, aes(x = MappedFixationPointX, y = MappedFixationPointY, color = user)) +
+  background_image(img) +
+  geom_point(aes(size = FixationDuration)) + 
+  scale_size(range = c(8,30)) +
+  scale_y_reverse()
+
+map_plot
+
+map_anim = map_plot + 
+  labs(title = "Frame = {frame_time}") + 
+  transition_time(user.index) + 
+  shadow_mark(past = TRUE) + 
+  theme(plot.title = element_text(size = 26, face ="bold"))
+
+animate(map_anim, nframes = 40, fps = 10, renderer = gifski_renderer(file = "map animation.gif"), 
+        width = (dim_img[2] + 50), height = dim_img[1], end_pause = 30)
+
+
+
