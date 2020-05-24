@@ -18,7 +18,7 @@ shinyUI(fluidPage(
                  ),
     
     mainPanel(h4("Please Wait While Animations Are Being Rendered"),
-      #textOutput("mymap"),
+      #imageOutput("mymap"),
       imageOutput("plot1")
       )
   )

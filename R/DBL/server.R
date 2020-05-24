@@ -16,15 +16,15 @@ shinyServer(
     userlist <- str_sort(userlist, numeric = TRUE)
     
 
-    inFile <- observeEvent(input$backImage, {
-      if(is.null(input$backImage)){
-        return()
-      } else {
-        inp <- input$backImage
-        inFile <- jpeg::readJPEG(inp$datapath)
-        return(inFile)
-      }
-    }) 
+#    inFile <- observeEvent(input$backImage, {
+#      if(is.null(input$backImage)){
+#        return()
+#      } else {
+#        inp <- input$backImage
+#        inFile <- jpeg::readJPEG(inp$datapath)
+#        return(inFile)
+#      }
+#    }) 
     
     
     data1 <- reactive({
@@ -56,15 +56,12 @@ shinyServer(
       maxFrame <- data1()[data1()$user.index == max(data1()$user.index), 10]
       updateSliderInput(session, "nframes", max = maxFrame)
       
-      userlist = data1()$user %>% unique() %>% as.character()
+      userlist = (subset(metro_data, StimuliName == input$map))$user %>% unique() %>% as.character()
       userlist = str_sort(userlist, numeric = TRUE)
       
       updatePickerInput(session, "users", choices = userlist, selected = userlist)
     })
     
-    output$mymap <- renderText({
-      paste("The current nframes is: ", input$nframes)
-    })
   
 
     # Creting Plot
@@ -85,9 +82,9 @@ shinyServer(
           labs(title = "Frame {frame} of {nframes}") + 
           theme(plot.title = element_text(size = 18, face ="bold"))
         
-        if(!is.null(inFile)){
-          mapplot <- mapplot + background_image(inFile)
-        }
+        #if(!is.null(inFile)){
+        #  mapplot <- mapplot + background_image(inFile)
+        #}
         
         anim_save("outfile.gif", animate(mapplot, nframes = (input$nframes + input$fps*2), fps = input$fps, end_pause = input$fps*2, width = 800, height = 600))
         
