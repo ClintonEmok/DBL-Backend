@@ -36,20 +36,20 @@ dim_img <- dim(img)
 
 map_plot <- ggplot(map.data, aes(x = MappedFixationPointX, y = MappedFixationPointY, color = user)) +
   background_image(img) +
-  geom_point(aes(size = FixationDuration)) + 
-  scale_size(range = c(8,30)) +
+  geom_point(aes(size = FixationDuration), alpha = 0.8) + 
+  scale_size(range = c(5,15)) +
   scale_y_reverse()
 
 map_plot
 
 map_anim = map_plot + 
-  labs(title = "Frame = {frame_time}") + 
+  labs(title = "Frame = {frame}") + 
   transition_time(user.index) + 
   shadow_mark(past = TRUE) + 
   theme(plot.title = element_text(size = 26, face ="bold"))
 
 animate(map_anim, nframes = 40, fps = 10, renderer = gifski_renderer(file = "map animation.gif"), 
-        width = (dim_img[2] + 50), height = dim_img[1], end_pause = 30)
+        width = (dim_img[2] + 50), height = dim_img[1])
 
 
 

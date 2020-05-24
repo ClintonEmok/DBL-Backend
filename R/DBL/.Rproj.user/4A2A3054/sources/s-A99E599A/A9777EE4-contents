@@ -3,6 +3,8 @@ library(ggplot2)
 library(gganimate)
 library(shinyWidgets)
 library(stringr)
+library(jpeg)
+library(ggpubr)
 
 #Back-End
 shinyServer(
@@ -13,18 +15,17 @@ shinyServer(
     userlist <- metro_data$user %>% unique() %>% as.character()
     userlist <- str_sort(userlist, numeric = TRUE)
     
-#    inFile <- reactive({
-#      inFile <- input$backImage
-#      inFile$datapath <- gsub("\\\\", "/", inFile$datapath)
-#      inFile
-#    })
-#    observeEvent(input$backImage, {
-#      inFile <- input$backImage
-#      if(is.null(inFile)){
-#        return()
-#      }  
-#      file.copy(inFile$datapath, file.path("C:/Users/20190771/Documents/GitHub/DBL-Backend/R/DBL/Server Upload", inFile$name))
-#    })
+
+    inFile <- observeEvent(input$backImage, {
+      if(is.null(input$backImage)){
+        return()
+      } else {
+        inp <- input$backImage
+        inFile <- jpeg::readJPEG(inp$datapath)
+        return(inFile)
+      }
+    }) 
+    
     
     data1 <- reactive({
       #creating the index column
@@ -75,7 +76,6 @@ shinyServer(
         
         mapplot <- ggplot(data1(), aes_string(x = "MappedFixationPointX", y = "MappedFixationPointY", color = input$color)) +
           #Graph
-          #background_image(inFile) +
           geom_point(aes(size = FixationDuration), alpha = 0.8) + 
           coord_fixed() +
           scale_size(range = c(1,16)) +
@@ -84,6 +84,10 @@ shinyServer(
           shadow_mark(PAST = TRUE) +
           labs(title = "Frame {frame} of {nframes}") + 
           theme(plot.title = element_text(size = 18, face ="bold"))
+        
+        if(!is.null(inFile)){
+          mapplot <- mapplot + background_image(inFile)
+        }
         
         anim_save("outfile.gif", animate(mapplot, nframes = (input$nframes + input$fps*2), fps = input$fps, end_pause = input$fps*2, width = 800, height = 600))
         
