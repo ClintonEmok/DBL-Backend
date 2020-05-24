@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1590342738266.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1241235697",
+    "id" : "8AB06FD6",
+    "lastKnownWriteTime" : 1590342941,
+    "last_content_update" : 1590342941022,
+    "path" : "~/GitHub/DBL-Backend/R/DBL/markdownR.Rmd",
+    "project_path" : "markdownR.Rmd",
+    "properties" : {
+        "cursorPosition" : "24,14",
+        "scrollLine" : "1",
+        "tempName" : "Untitled6"
+    },
+    "relative_order" : 7,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

@@ -4,7 +4,7 @@ library(jpeg)
 library(ggpubr)
 library(plyr)
 
-map.data <- tracking_data[tracking_data["StimuliName"] == "02_Berlin_S1.jpg",]
+map.data <- tracking_data[tracking_data["StimuliName"] == "01_Antwerpen_S1.jpg",]
 
 rownames(map.data) <- 1:nrow(map.data)
 
