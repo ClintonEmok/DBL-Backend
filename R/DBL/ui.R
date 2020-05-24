@@ -8,6 +8,7 @@ shinyUI(fluidPage(
     sidebarPanel(h3("Select the Features"),
                  selectInput("map", "Select a map from the drop down list", maplist),
                  pickerInput("users", "Select user(s)", choices = userlist, selected = userlist, options = list('actions-box' = TRUE), multiple = TRUE),
+                 p("Please do not deselect all users and click on render as it crashes the app"),
                  sliderInput("nframes", "Select the number of frames", min = 10, max = 50, value = 25),
                  p("Please keep in mind that higher number of frames will result in longer rendering times."),
                  sliderInput("fps", "Select frames per second", min = 1, max = 50, value = 10),

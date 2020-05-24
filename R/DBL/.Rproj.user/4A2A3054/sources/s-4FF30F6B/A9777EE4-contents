@@ -1,6 +1,8 @@
 library(shiny)
 library(ggplot2)
 library(gganimate)
+library(shinyWidgets)
+library(stringr)
 
 #Back-End
 shinyServer(
@@ -8,7 +10,8 @@ shinyServer(
     #Importing & Preprocessing Data
     metro_data <- read.csv('metro_data.csv', sep = ';', encoding = "latin-1")
     maplist <- unique(metro_data$StimuliName)
-    userlist <- as.character(unique(metro_data$user))
+    userlist <- metro_data$user %>% unique() %>% as.character()
+    userlist <- str_sort(userlist, numeric = TRUE)
     
 #    inFile <- reactive({
 #      inFile <- input$backImage
@@ -33,7 +36,6 @@ shinyServer(
       #creating the user index column
       mapdata$user.index <- 1:nrow(mapdata)
       
-        
       user.count <- 1
       for(i in 2:nrow(mapdata)){
         if(mapdata[i, 7] == mapdata[i-1, 7]){
@@ -47,14 +49,20 @@ shinyServer(
       
       return(mapdata)
     })
+
     
     observe({
       maxFrame <- data1()[data1()$user.index == max(data1()$user.index), 10]
       updateSliderInput(session, "nframes", max = maxFrame)
+      
+      userlist = data1()$user %>% unique() %>% as.character()
+      userlist = str_sort(userlist, numeric = TRUE)
+      
+      updatePickerInput(session, "users", choices = userlist, selected = userlist)
     })
     
     output$mymap <- renderText({
-      paste("The current user is: ", input$users)
+      paste("The current nframes is: ", input$nframes)
     })
   
 
@@ -70,12 +78,14 @@ shinyServer(
           #background_image(inFile) +
           geom_point(aes(size = FixationDuration), alpha = 0.8) + 
           coord_fixed() +
-          scale_size(range = c(2,10)) +
+          scale_size(range = c(1,16)) +
           scale_y_reverse() +
           transition_time(user.index) +
-          shadow_mark(PAST = TRUE)
+          shadow_mark(PAST = TRUE) +
+          labs(title = "Frame {frame} of {nframes}") + 
+          theme(plot.title = element_text(size = 18, face ="bold"))
         
-        anim_save("outfile.gif", animate(mapplot, nframes = input$nframes, fps = input$fps, end_pause = 10))
+        anim_save("outfile.gif", animate(mapplot, nframes = (input$nframes + input$fps*2), fps = input$fps, end_pause = input$fps*2, width = 800, height = 600))
         
         list(src = "outfile.gif",
              contentType = 'image/gif')
