@@ -32,10 +32,6 @@ shinyServer(
     data1 <- reactive({
       mapdata <- subset(metro_data, StimuliName == input$map)
       
-      userlist =  mapdata$user %>% unique() %>% as.character()
-      userlist = str_sort(userlist, numeric = TRUE)
-      updatePickerInput(session, "users", choices = userlist, selected = userlist)
-      
       input$Load
       isolate({mapdata <- mapdata[mapdata$user %in% input$users,]})
       mapdata$index <- 1:nrow(mapdata)

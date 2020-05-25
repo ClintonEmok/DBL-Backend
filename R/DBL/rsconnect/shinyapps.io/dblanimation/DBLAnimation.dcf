@@ -5,6 +5,9 @@ account: dblanimation
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 2350312
-bundleId: 3185321
+bundleId: 3186928
 url: https://dblanimation.shinyapps.io/DBLAnimation/
-when: 1590355527.84643
+when: 1590399778.13355
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: map animation.gif|map average animation.gif|Map Plots 5.png|markdownR.html|markdownR.Rmd|Rplot.html|Server Upload/01_Antwerpen_S1.jpg
