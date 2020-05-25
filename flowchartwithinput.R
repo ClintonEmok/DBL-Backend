@@ -2,10 +2,12 @@ library(shiny)
 library(cluster)    # clustering algorithms
 library(factoextra) # clustering algorithms & visualization
 library(markovchain)
+library(ggplot2)
+library(dplyr)
+library(diagram)
 
 tracking_data <- read.csv('metro_data.csv', sep = ';')
-stim_list = c(tracking_data$StimuliName)
-stim_list_unique <- unique(stim_list)
+stim_list_unique <- unique(tracking_data$StimuliName)
 
 shinyApp(
   ui = fluidPage(
@@ -17,9 +19,11 @@ shinyApp(
       )
     )
   ),
+  
+  
   server = function(input, output) {
     selectedData <- reactive({
-      select(subset(tracking_data, StimuliName == input$map), "MappedFixationPointX","MappedFixationPointY")
+      dplyr::select(subset(tracking_data, StimuliName == input$map), "MappedFixationPointX","MappedFixationPointY")
     })
     
     clusters <- reactive({
@@ -35,7 +39,7 @@ shinyApp(
       input$newplot
       set.seed(123)
       subs <- subset(tracking_data, StimuliName == input$map)
-      cluster_df_inp <- select(subs, "MappedFixationPointX","MappedFixationPointY")
+      cluster_df_inp <- dplyr::select(subs, "MappedFixationPointX","MappedFixationPointY")
       
       k2_inp <- kmeans(cluster_df_inp, centers = input$clusters, nstart = 25)
       
@@ -50,9 +54,9 @@ shinyApp(
       for (n in user_list_unique_inp) {
         for_seq <- c(subset(subs, user == n)$Cluster)
         sequenceMatr_for <-createSequenceMatrix(for_seq,sanitize=FALSE, possibleStates = n)
-        startmatrix_inp <- startmatrix_inp + sequenceMatr_for
+        startmatrix_inp <- startmatrix_inp %+% sequenceMatr_for
       }
-      plot2 <- plotmat(A = as.data.frame(startmatrix_inp), pos = 6, curve = 0.7, name = name, lwd = 2, arr.len = 0.6, arr.width = 0.25, my = -0.2, box.size = 0.05, arr.type = "triangle", dtext = 0.95, main = "Flow chart AOI") 
+      plot2 <- diagram::plotmat(A = as.data.frame(startmatrix_inp), pos = 6, curve = 0.7, name = name, lwd = 2, arr.len = 0.6, arr.width = 0.25, my = -0.2, box.size = 0.05, arr.type = "triangle", dtext = 0.95, main = "Flow chart AOI") 
     })
     
   }
