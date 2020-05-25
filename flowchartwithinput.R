@@ -1,46 +1,60 @@
 library(shiny)
 library(cluster)    # clustering algorithms
 library(factoextra) # clustering algorithms & visualization
-library(dplyr)
 library(markovchain)
-library(lattice)
-library(diagram)
 
 tracking_data <- read.csv('metro_data.csv', sep = ';')
 stim_list = c(tracking_data$StimuliName)
 stim_list_unique <- unique(stim_list)
 
-
 shinyApp(
-  ui = fluidPage(selectInput("variable", "Variable:", stim_list_unique),
-      mainPanel(
-        plotOutput("plot")
+  ui = fluidPage(
+    selectInput("map", "Map:", stim_list_unique),
+    numericInput('clusters', 'Cluster count', 3, min = 1, max = 9),
+    mainPanel(
+      fluidRow(
+        splitLayout(cellWidths = c("50%", "50%"), plotOutput("plot1"), plotOutput("plot2"))
       )
-#    )
+    )
   ),
   server = function(input, output) {
-    output$plot <- renderPlot({
+    selectedData <- reactive({
+      select(subset(tracking_data, StimuliName == input$map), "MappedFixationPointX","MappedFixationPointY")
+    })
+    
+    clusters <- reactive({
+      set.seed(123)
+      kmeans(selectedData(), centers = input$clusters, nstart  = 25)
+    })
+    
+    output$plot1 <- renderPlot({
+      fviz_cluster(clusters(), data=selectedData())
+    })
+    
+    output$plot2 <- renderPlot({
       input$newplot
-      subs <- subset(tracking_data, StimuliName == input$variable)
+      set.seed(123)
+      subs <- subset(tracking_data, StimuliName == input$map)
       cluster_df_inp <- select(subs, "MappedFixationPointX","MappedFixationPointY")
       
-      k2_inp <- kmeans(cluster_df_inp, centers = 6, nstart  = 25)
+      k2_inp <- kmeans(cluster_df_inp, centers = input$clusters, nstart = 25)
       
       subs[["Cluster"]] <- c(k2_inp$cluster)
       
       user_list_inp = c(subs$user)
       user_list_unique_inp <- unique(user_list_inp)
       
-      startmatrix_inp <- matrix(nrow = 6, ncol = 6)
+      startmatrix_inp <- matrix(nrow = input$clusters, ncol = input$clusters)
       startmatrix_inp[] <- 0L
+      n <- c(1:6)
       for (n in user_list_unique_inp) {
         for_seq <- c(subset(subs, user == n)$Cluster)
-        sequenceMatr_for <-createSequenceMatrix(for_seq,sanitize=FALSE, possibleStates = seq(1:6))
+        sequenceMatr_for <-createSequenceMatrix(for_seq,sanitize=FALSE, possibleStates = n)
         startmatrix_inp <- startmatrix_inp + sequenceMatr_for
       }
-      plot <- plotmat(A = as.data.frame(startmatrix_inp), pos = 6, curve = 0.7, name = name, lwd = 2, arr.len = 0.6, arr.width = 0.25, my = -0.2, box.size = 0.05, arr.type = "triangle", dtext = 0.95, main = "Flow chart AOI")
+      plot2 <- plotmat(A = as.data.frame(startmatrix_inp), pos = 6, curve = 0.7, name = name, lwd = 2, arr.len = 0.6, arr.width = 0.25, my = -0.2, box.size = 0.05, arr.type = "triangle", dtext = 0.95, main = "Flow chart AOI") 
     })
+    
   }
 )
-
 
