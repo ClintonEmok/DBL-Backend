@@ -5,14 +5,14 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "3230128662",
+    "hash" : "1804694443",
     "id" : "A3DD1BF1",
-    "lastKnownWriteTime" : 1590351601,
-    "last_content_update" : 1590351601842,
+    "lastKnownWriteTime" : 1590355104,
+    "last_content_update" : 1590355104739,
     "path" : "~/GitHub/DBL-Backend/R/DBL/ui.R",
     "project_path" : "ui.R",
     "properties" : {
-        "cursorPosition" : "20,7",
+        "cursorPosition" : "16,63",
         "docOutlineVisible" : "0",
         "scrollLine" : "0",
         "tempName" : "Untitled3"

@@ -14,6 +14,7 @@ shinyUI(fluidPage(
                  sliderInput("fps", "Select frames per second", min = 1, max = 50, value = 10),
                  radioButtons("color", "Select the coloring of the datapoints", choices = c("user", "user.index"), selected = "user"),
                  fileInput("backImage", "Select a Map for Background", accept = c("image/jpeg", "image/png"), multiple = FALSE),
+                 p("Background image currently does not work"),
                  actionButton("Load", "Render")
                  ),
     

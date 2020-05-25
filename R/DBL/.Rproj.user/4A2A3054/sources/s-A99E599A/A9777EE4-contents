@@ -5,6 +5,8 @@ library(shinyWidgets)
 library(stringr)
 library(jpeg)
 library(ggpubr)
+library(rsconnect)
+library(gifski)
 
 #Back-End
 shinyServer(
@@ -28,15 +30,20 @@ shinyServer(
     
     
     data1 <- reactive({
-      #creating the index column
       mapdata <- subset(metro_data, StimuliName == input$map)
+      
+      userlist =  mapdata$user %>% unique() %>% as.character()
+      userlist = str_sort(userlist, numeric = TRUE)
+      updatePickerInput(session, "users", choices = userlist, selected = userlist)
+      
       input$Load
       isolate({mapdata <- mapdata[mapdata$user %in% input$users,]})
       mapdata$index <- 1:nrow(mapdata)
         
-      #creating the user index column
+      #creating the index column
       mapdata$user.index <- 1:nrow(mapdata)
       
+      #creating user index column
       user.count <- 1
       for(i in 2:nrow(mapdata)){
         if(mapdata[i, 7] == mapdata[i-1, 7]){
@@ -56,10 +63,6 @@ shinyServer(
       maxFrame <- data1()[data1()$user.index == max(data1()$user.index), 10]
       updateSliderInput(session, "nframes", max = maxFrame)
       
-      userlist = (subset(metro_data, StimuliName == input$map))$user %>% unique() %>% as.character()
-      userlist = str_sort(userlist, numeric = TRUE)
-      
-      updatePickerInput(session, "users", choices = userlist, selected = userlist)
     })
     
   
@@ -86,7 +89,8 @@ shinyServer(
         #  mapplot <- mapplot + background_image(inFile)
         #}
         
-        anim_save("outfile.gif", animate(mapplot, nframes = (input$nframes + input$fps*2), fps = input$fps, end_pause = input$fps*2, width = 800, height = 600))
+        anim_save("outfile.gif", animate(mapplot, nframes = (input$nframes + input$fps*2), fps = input$fps, end_pause = input$fps*2, width = 800, height = 600,
+                                         renderer = gifski_renderer()))
         
         list(src = "outfile.gif",
              contentType = 'image/gif')
