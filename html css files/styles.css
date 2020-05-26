@@ -1,0 +1,147 @@
+@import url('https://fonts.googleapis.com/css2?family=Asap:wght@400;500;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color:#292C34;
+    color: #e9e1d1;
+    font-family: Asap, sans-serif ;
+}
+
+header {
+    background-color: #292C34;
+    padding-top: 20px;
+}
+
+header > h1 {
+    color: #e9e1d1;
+    text-align: center;
+    font-family: Asap, sans-serif;
+}
+
+.menu {
+    color: #e9e1d1;
+    font-size: 20px;
+    font-weight: bold;
+    display: inline-block;
+    padding: 3px;
+    margin-left: 20px;
+    margin-top: 15px;
+    transition: all 0.5s ease;
+    width: 90px;
+    text-align: center;
+}
+
+.menu:link {
+        text-decoration: none; 
+}
+
+.menu:hover {
+    cursor: pointer;
+    background: #e9e1d1;
+    color: #292C34;
+    border-radius: 6px;
+}
+
+.intro-home {
+    color: #e9e1d1;
+    text-align: center;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+#content {
+    display: flex;
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+.text {
+    margin: 15% 5%;
+
+}
+
+#left {
+    background-color: #26262B;
+    min-height: 100%;
+    width: 20%;
+    position: absolute;
+    color: #e9e1d1;
+    float: left;
+    
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.custom-file-upload {
+    border-radius: 6px;
+    display: inline-block;
+    width: 40%;
+    padding: 6px 6px;
+    cursor: pointer;
+    background-color: #e9e1d1;
+    color:  #26262B;
+    margin-left: 5%;
+}
+
+#left > form > label {
+    text-align: center;
+    display: inline-block;
+}
+
+#left > form > button {
+    float: right;
+    margin-right: 5%;
+    border-radius: 6px;
+    border-color: #2ab51d;
+    width: 20%;
+    padding: 6px 6px;
+    cursor: pointer;
+    background-color: #2ab51d;
+    color:  #e9e1d1;
+    font-weight: bold;
+    border-style: solid;
+}
+
+ .plots {
+    display: list-item;
+    margin: 5% 0%; 
+    width: 100%;
+    padding: 6px 6px;
+    cursor: pointer;
+    background-color: #26262B;
+    border-color: #26262B;
+    color:  #e9e1d1;
+    font-weight: bolder;
+    border-style: solid;
+    text-align: left;
+ }
+
+.plots:hover {
+    cursor: pointer;
+    background-color: #e9e1d1;
+    color: #26262B;
+}
+ 
+#right {
+    background-color: #635f62;
+    min-height: 100%;
+    width: 80%;
+    position: absolute;
+    left: 20%;
+    margin-left: auto;
+    margin-right: auto;
+   
+}
+
+#plot {
+    display: block;
+    margin-left: auto;
+    margin-right: auto 
+}
