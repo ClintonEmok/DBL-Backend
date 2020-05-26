@@ -1,134 +1,147 @@
-/* Master Styles */
-body{
-    margin: 0px;
-    font-family: "Lato" , sans-serif;
+@import url('https://fonts.googleapis.com/css2?family=Asap:wght@400;500;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.container {
-  display: grid;
-  grid-template-columns: 1fr;
+body {
+    background-color:#292C34;
+    color: #e9e1d1;
+    font-family: Asap, sans-serif ;
 }
 
-.nav-wrapper {
-  display: flex;
-  justify-content: space-between;
-  padding: 38px;
+header {
+    background-color: #292C34;
+    padding-top: 20px;
 }
 
-.left-side {
-  display: flex;
+header > h1 {
+    color: #e9e1d1;
+    text-align: center;
+    font-family: Asap, sans-serif;
 }
 
-.nav-wrapper > .left-side > div {
-  margin-right: 20px;
-  text-transform: uppercase;
-  font-size: 0.9rem;
+.menu {
+    color: #e9e1d1;
+    font-size: 20px;
+    font-weight: bold;
+    display: inline-block;
+    padding: 3px;
+    margin-left: 20px;
+    margin-top: 15px;
+    transition: all 0.5s ease;
+    width: 90px;
+    text-align: center;
 }
 
-.nav-link-wrapper {
-  height: 22px;
-  border-bottom: 1px solid transparent;
-  transition: border-bottom 0.5s;
+.menu:link {
+        text-decoration: none; 
 }
 
-.active-nav-link {
-  border-bottom: 1px solid black;
+.menu:hover {
+    cursor: pointer;
+    background: #e9e1d1;
+    color: #292C34;
+    border-radius: 6px;
 }
 
-.active-nav-link a {
-  color: black !important;
+.intro-home {
+    color: #e9e1d1;
+    text-align: center;
+    font-size: 30px;
+    font-weight: bold;
 }
 
-.nav-link-wrapper a {
-  color: #8a8a8a;
-  text-decoration: none;
-  transition: color 0.5s;
+#content {
+    display: flex;
+    margin-top: 20px;
+    font-weight: bold;
 }
 
-.nav-link-wrapper:hover {
-  border-bottom: 1px solid black;
+.text {
+    margin: 15% 5%;
+
 }
 
-.nav-link-wrapper a:hover {
-  color: black;
+#left {
+    background-color: #26262B;
+    min-height: 100%;
+    width: 20%;
+    position: absolute;
+    color: #e9e1d1;
+    float: left;
+    
 }
 
-.active-nav-link {
-    border-bottom: 1px solid black;
+input[type="file"] {
+    display: none;
 }
 
-.active-nav-link a {
-    color: black !important;
+.custom-file-upload {
+    border-radius: 6px;
+    display: inline-block;
+    width: 40%;
+    padding: 6px 6px;
+    cursor: pointer;
+    background-color: #e9e1d1;
+    color:  #26262B;
+    margin-left: 5%;
 }
 
-.portfolio-items-wrapper {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+#left > form > label {
+    text-align: center;
+    display: inline-block;
 }
 
-.portfolio-item-wrapper {
-  position: relative;
+#left > form > button {
+    float: right;
+    margin-right: 5%;
+    border-radius: 6px;
+    border-color: #2ab51d;
+    width: 20%;
+    padding: 6px 6px;
+    cursor: pointer;
+    background-color: #2ab51d;
+    color:  #e9e1d1;
+    font-weight: bold;
+    border-style: solid;
 }
 
-.portfolio-img-background {
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  height: 350px;
-  width: 100%;
-}
-
-.img-text-wrapper {
-  position: absolute;
-  top: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  text-align: center;
-  padding-left: 100px;
-  padding-right: 100px;
-}
-
-.logo-wrapper img {
-    width: 50%;
-    margin-bottom: 20px;
-}
-
-.img-text-wrapper .subtitle {
-    transition: 1s;
-    color: transparent;
-    font-weight: 600;
-}
-
-.img-text-wrapper:hover .subtitle {
-    font-weight: 600;
-    color: lightseagreen;
-}
-
-.img-darken {
-    transition: 1s;
-    filter: brightness(10%);
-}
-
-
-/* About page */
-
-.two-column-wrapper {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-}
-
-.profile-image-wrapper img {
+ .plots {
+    display: list-item;
+    margin: 5% 0%; 
     width: 100%;
+    padding: 6px 6px;
+    cursor: pointer;
+    background-color: #26262B;
+    border-color: #26262B;
+    color:  #e9e1d1;
+    font-weight: bolder;
+    border-style: solid;
+    text-align: left;
+ }
+
+.plots:hover {
+    cursor: pointer;
+    background-color: #e9e1d1;
+    color: #26262B;
+}
+ 
+#right {
+    background-color: #635f62;
+    min-height: 100%;
+    width: 80%;
+    position: absolute;
+    left: 20%;
+    margin-left: auto;
+    margin-right: auto;
+   
 }
 
-.profile-content-wrapper {
-    padding: 30px;
-
-}
-
-.profile-content-wrapper h1 {
-    color: turquoise;
+#plot {
+    display: block;
+    margin-left: auto;
+    margin-right: auto 
 }

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Random eyetracking vis name</title>
+        <link rel = "stylesheet" href = "styles.css">
+    </head>
+    <body>
+        <header>
+            <h1>Eyetracking vis</h1>
+        </header>
+
+        <a href = "index.html" class = "menu">Home</a>
+        <a href = "vis.html" class = "menu">Vis</a>
+        <a href = "about.html" class = "menu">About</a>
+
+        <div id = "content">
+            <div id = "left">
+                <label class = "text">Select a .csv file to upload:</label>
+                <form action="/action_page.php">
+                    <label for="file-upload" class="custom-file-upload">
+                         Click to select
+                    </label>
+                    <input id="file-upload" type="file"/>
+                    <button>Upload</button>   
+              </form>
+              <label class = "text">Select a plot for your data:</label>
+              <button class = "plots">Flowmap vis</button>
+              <button class = "plots">Gaze plot</button>
+              <button class = "plots">Heatmap</button>
+            </div>
+
+            <div id = "right">
+                <p>info abou the graphs maybe? and then have a button CHOOSE A VIS</p>
+                <img src = "images/plot.png" id = "plot">
+            </div>
+        </div>
+        
+
+    </body>
+</html>
