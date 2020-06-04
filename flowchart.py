@@ -1,36 +1,29 @@
-import numpy as np
 import pandas as pd
-import bokeh as bk
-import random
 import numpy as np
-
 import networkx as nx
 
 from graphviz import Digraph
 import pydot
 from networkx.drawing.nx_agraph import graphviz_layout
-
+from networkx.algorithms import bipartite
 from networkx.drawing.nx_pydot import graphviz_layout
 
 import holoviews as hv
 from holoviews import opts, dim
 from holoviews.element.graphs import layout_nodes
+hv.extension('bokeh')
 
-from pprint import pprint
 
 import math
 #%matplotlib inline
 import matplotlib.pyplot as plt
 
-import matplotlib.cm as cm
-import matplotlib as mpl
 import seaborn as sns
 sns.set()  # set Seaborn defaults
 plt.rcParams['figure.figsize'] = 10, 5  # default hor./vert. size of plots, in inches
 plt.rcParams['lines.markeredgewidth'] = 1  # to fix issue with seaborn box plots; needed after import seaborn
 from sklearn.cluster import KMeans  # for clustering
 
-#from bkcharts import Chord
 from bokeh.io import output_notebook, show, reset_output, curdoc
 from bokeh.models import Slider, CustomJS, Select, Arrow, NormalHead
 from bokeh.plotting import figure, from_networkx
@@ -267,15 +260,9 @@ m = np.amax(matrix)
 norm_matrix = (1 / m) * matrix
 df_norm_matrix = pd.DataFrame(norm_matrix, index=AOI, columns=AOI)
 
-print(norm_matrix)
-print(type(norm_matrix))
-
-print(df_norm_matrix)
-
 matrix_r = df_norm_matrix.reset_index()
 matrix_rows = pd.melt(matrix_r, id_vars=['index'], value_vars=AOI, var_name='target_AOI')
 
-#print(matrix_rows)
 
 # Above was basically Jane's code without interactivity, here come's mine:
 
@@ -287,13 +274,11 @@ end_matrix = matrix_nozero.copy()
 #end_matrix['max_value'] = end_matrix.groupby('index')['value'].transform('max')
 end_matrix = end_matrix.loc[end_matrix['value'] == end_matrix.groupby('index')['value'].transform('max')]
 
-#print(end_matrix)
 
+# Graph with networkx
+states = [*range(1, n_clusters+1, 1)]
 
-
-#graph with networkx
-states = ['1', '2', '3', '4', '5', '6'] #un hard code this
-
+# function to get the markov edges
 def _get_markov_edges(Q):
     edges = {}
     for col in Q.columns:
@@ -301,40 +286,53 @@ def _get_markov_edges(Q):
             edges[(idx,col)] = Q.loc[idx,col]
     return edges
 
+# make a dictionary for the pairs of nodes and their corresponding weight
 edges_wts = _get_markov_edges(df_norm_matrix)
-pprint(edges_wts)
+
+edges_wts_nozero = {}
+
+# make a dictionary for the pairs of nodes and their corresponding weight
+# make sure the only connections drawn are nonzero, to make the plot clearer
+# I've now rounded all the values up to 4 decimals, can be changed
+for x, y in _get_markov_edges(df_norm_matrix):
+    if edges_wts[x, y] > 0:
+        edges_wts_nozero[(x,y)] = round(edges_wts[x, y], 4)
+
+# making two lists containing the 'from' and 'to' nodes
+from_nodes = []
+for i in states:
+   from_nodes.append('from'+str(states[i-1]))
+
+to_nodes = []
+for i in states:
+   to_nodes.append('to'+str(states[i-1]))
 
 
-# create graph object
-G = nx.MultiDiGraph()
-
-# nodes correspond to states
-G.add_nodes_from(states)
-print('Nodes:\n{G.nodes()}\n')
-
-# edges represent transition probabilities
-for k, v in edges_wts.items():
+B = nx.Graph()
+# Add nodes with the node attribute "bipartite"
+B.add_nodes_from(from_nodes, bipartite=0)
+B.add_nodes_from(to_nodes, bipartite=1)
+for k, v in edges_wts_nozero.items():
     tmp_origin, tmp_destination = k[0], k[1]
-    G.add_edge(tmp_origin, tmp_destination, weight=v, label=v)
-#print('Edges:')
-end_graph = G
-pprint(G.edges(data=True))
+    B.add_edge('from'+str(tmp_origin), 'to'+str(tmp_destination), weight=v, label=v)
 
-pos = nx.drawing.nx_pydot.graphviz_layout(G, prog='dot')
-nx.draw_networkx(G, pos)
+l, r = nx.bipartite.sets(B)
+
+# Some stuff for a matplot
+#pos2 = {}
+
+# Update position for node from each group
+#pos2.update((node, (1, index)) for index, node in enumerate(l))
+#pos2.update((node, (2, index)) for index, node in enumerate(r))
+
+#nx.draw(B, pos=pos2)
 
 
+# actually drawing the graph with holoviews
+flowchart = hv.Graph.from_networkx(B, nx.bipartite_layout(B, nodes=l)).opts(tools=['hover'], directed=True,
+                                                                     node_size=20, inspection_policy='edges',
+                                                                     arrowhead_length=0.1)
+                                                                     #edge_line_width=hv.dim('Weight')*10)
 
-# create edge labels for jupyter plot but is not necessary
-edge_labels = {(n1, n2): d['label'] for n1, n2, d in G.edges(data=True)}
-nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
-end_graph = nx.drawing.nx_pydot.write_dot(G, 'pet_dog_markov.dot')
-#plt.show()
-
-plot = figure(title="Networkx Integration Demonstration", x_range=(-5, 5), y_range=(-5, 5),
-              tools="", toolbar_location=None)
-
-graph = from_networkx((G, pos), nx.circular_layout, scale=2, center=(0,0))
-plot.renderers.append(graph)
-
-show(plot)
+labels = hv.Labels(flowchart.nodes, ['x', 'y'], 'index')
+show(hv.render(flowchart * labels.opts(text_font_size='8pt', text_color='white', bgcolor='white')))
