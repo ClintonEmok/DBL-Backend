@@ -12,7 +12,8 @@ import holoviews as hv
 from holoviews import opts, dim
 from holoviews.element.graphs import layout_nodes
 hv.extension('bokeh')
-
+import holoviews.plotting.bokeh
+from pprint import pprint
 
 import math
 #%matplotlib inline
@@ -24,7 +25,7 @@ plt.rcParams['figure.figsize'] = 10, 5  # default hor./vert. size of plots, in i
 plt.rcParams['lines.markeredgewidth'] = 1  # to fix issue with seaborn box plots; needed after import seaborn
 from sklearn.cluster import KMeans  # for clustering
 
-from bokeh.io import output_notebook, show, reset_output, curdoc
+from bokeh.io import output_notebook, show, reset_output, curdoc, output_file
 from bokeh.models import Slider, CustomJS, Select, Arrow, NormalHead
 from bokeh.plotting import figure, from_networkx
 from bokeh.layouts import layout, column
@@ -39,7 +40,8 @@ from bokeh.models import (
     Oval,
     GraphRenderer,
     StaticLayoutProvider,
-    ImageURL
+    ImageURL,
+    Range1d
 )
 from bokeh.palettes import BuPu, Colorblind8, Spectral8
 from bokeh.palettes import Colorblind8
@@ -298,15 +300,16 @@ for x, y in _get_markov_edges(df_norm_matrix):
     if edges_wts[x, y] > 0:
         edges_wts_nozero[(x,y)] = round(edges_wts[x, y], 4)
 
+#pprint(edges_wts_nozero)
+
 # making two lists containing the 'from' and 'to' nodes
 from_nodes = []
 for i in states:
-   from_nodes.append('from'+str(states[i-1]))
+   from_nodes.append(' '+str(states[i-1]))
 
 to_nodes = []
 for i in states:
-   to_nodes.append('to'+str(states[i-1]))
-
+   to_nodes.append(str(states[i-1]))
 
 B = nx.Graph()
 # Add nodes with the node attribute "bipartite"
@@ -314,9 +317,12 @@ B.add_nodes_from(from_nodes, bipartite=0)
 B.add_nodes_from(to_nodes, bipartite=1)
 for k, v in edges_wts_nozero.items():
     tmp_origin, tmp_destination = k[0], k[1]
-    B.add_edge('from'+str(tmp_origin), 'to'+str(tmp_destination), weight=v, label=v)
+    B.add_edge(' '+str(tmp_origin), str(tmp_destination), weight=v)#, label=v)
+
+#pprint(B.edges)
 
 l, r = nx.bipartite.sets(B)
+
 
 # Some stuff for a matplot
 #pos2 = {}
@@ -327,12 +333,32 @@ l, r = nx.bipartite.sets(B)
 
 #nx.draw(B, pos=pos2)
 
+#plot = figure(title="Networkx Integration Demonstration", x_range=(-1.1,1.1), y_range=(-1.1,1.1),
+              #tools="", toolbar_location=None)
+#graph = hv.Graph.from_networkx(B, nx.bipartite_layout(B, nodes=l)).opts(tools=['hover'], directed=True,
+                                                                           # node_size=25, inspection_policy='edges',
+                                                                            #arrowhead_length=0.1)
+                                                                           # , vdims='weight')
+#plot.hv.render(graph)
 
+#output_file("networkx_graph.html")
+#show(plot)
+
+
+renderer = hv.renderer('bokeh')
 # actually drawing the graph with holoviews
-flowchart = hv.Graph.from_networkx(B, nx.bipartite_layout(B, nodes=l)).opts(tools=['hover'], directed=True,
-                                                                     node_size=20, inspection_policy='edges',
-                                                                     arrowhead_length=0.1)
-                                                                     #edge_line_width=hv.dim('Weight')*10)
+flowchart = hv.Graph.from_networkx(B, nx.bipartite_layout(B, nodes=l), vdims='weight').opts(tools=['hover'], directed=True,
+                                                                            node_size=25, inspection_policy='edges',
+                                                                            arrowhead_length=0.1)
+                                                                            #edge_line_width=B.nodes('weight'))
+                                                                            #, vdims='weight')
 
 labels = hv.Labels(flowchart.nodes, ['x', 'y'], 'index')
-show(hv.render(flowchart * labels.opts(text_font_size='8pt', text_color='white', bgcolor='white')))
+#layout = flowchart * labels.opts(text_font_size='8pt', text_color='red', bgcolor='white')
+
+#doc = renderer.server_doc(layout)
+show(hv.render(flowchart.opts(edge_line_width=hv.dim('weight')*3) * labels.opts(text_font_size='8pt', text_color='red',
+                                                                                 bgcolor='white')))
+#from bokeh.server.server import Server
+
+#server = Server({'/': app}, port=0)
