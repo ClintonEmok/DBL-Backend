@@ -440,7 +440,7 @@ def update():
     color_mapper.factors = list(df['user'])
     size_mapper.x = [df.FixationDuration.min(), df.FixationDuration.max()]
 
-    trackData = hv.Dataset(calc_animation())
+    calc_animation()
 
     # update database data source
     plot_database = database_callback()
@@ -454,10 +454,6 @@ def update():
 
 
 # In[18]:
-trackData = Eyetracking_data.copy()
-trackData['user_index'] = list(range(0, len(Eyetracking_data)))
-trackData = hv.Dataset(trackData)
-
 def calc_animation():
     stimulimap_val = stimulimap.value
     userselect_val = select_user.value.strip()
@@ -490,6 +486,7 @@ def calc_animation():
 kdims = ['MappedFixationPointX', 'MappedFixationPointY']
 vdims = ['FixationIndex', 'user']
 
+trackData = hv.Dataset(calc_animation())
 
 hvtracking = trackData.to(hv.Points, kdims, vdims, 'user_index')
 
