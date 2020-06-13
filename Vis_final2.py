@@ -128,7 +128,7 @@ users.insert(0, "All")
 slider_cluster = Slider(title="Amount of Clusters/AOIs", start=1, end=12, value=2, step=1)
 stimulimap = Select(title="Select stimulus", value=maps[0], options=maps)
 select_user = Select(title="Select user:", value="All", options=users)
-
+button = Button(label='► Play Animation', width=80)
 
 # In[9]:
 
@@ -454,8 +454,8 @@ def update():
     )
 
 
-# In[18]:
-def calc_animation(stimulimap_val):
+def calc_animation():
+    stimulimap_val = stimulimap.value
     userselect_val = select_user.value.strip()
 
     mapdata = Eyetracking_data.copy()
@@ -484,15 +484,21 @@ def calc_animation(stimulimap_val):
     return mapdata
 
 
-
-def animationFunction(trackdata):
-    hvData = hv.Dataset(trackdata)
+def animationFunction(trackData):
+    hvData = hv.Dataset(trackData)
 
     kdims = ['MappedFixationPointX', 'MappedFixationPointY']
     vdims = ['FixationDuration', 'user', 'StimuliName']
 
     hvtracking = hvData.to(hv.Points, kdims, vdims, 'user_index')
-    
+
+    opts.defaults(
+        opts.Points(alpha=0.8, line_color='black', cmap='Set1',
+                    width=600, height=450, color='user', size=dim('FixationDuration') * 0.03,
+                    tools=['hover'], title='DBL Animation',
+                    invert_yaxis=True, show_grid=True)
+    )
+
     # Define custom widgets
     def animate_update():
         user_index = animation_slider.value + 1
@@ -528,7 +534,6 @@ def animationFunction(trackdata):
     hvplot.update((1,))
 
     plot = layout([[hvplot.state], [button, animation_slider]])
-
 
     return plot
 
