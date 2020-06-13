@@ -128,7 +128,7 @@ users.insert(0, "All")
 slider_cluster = Slider(title="Amount of Clusters/AOIs", start=1, end=12, value=2, step=1)
 stimulimap = Select(title="Select stimulus", value=maps[0], options=maps)
 select_user = Select(title="Select user:", value="All", options=users)
-button = Button(label='► Play Animation', width=80)
+
 
 # In[9]:
 
@@ -520,13 +520,14 @@ def animationFunction(trackdata):
     animation_slider = Slider(start=start, end=end, value=0, step=1, title="User Index")
     animation_slider.on_change('value', slider_update)
 
+    button = Button(label='► Play Animation', width=80)
     button.on_click(animate)
 
     doc = curdoc()
     hvplot = renderer.get_plot(hvtracking, doc)
     hvplot.update((1,))
 
-    plot = layout([[hvplot.state], [animation_slider]])
+    plot = layout([[hvplot.state], [button, animation_slider]])
 
 
     return plot
